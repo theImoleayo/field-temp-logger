@@ -16,7 +16,7 @@
       <div class="floating-circle circle-4"></div>
     </div>
   </div>
-  
+
   <!-- Check-in Content -->
   <div class="checkin-content-wrapper">
     <div class="checkin-grid">
@@ -36,7 +36,7 @@
               <p class="brand-subtitle">Daily Safety Registration Portal</p>
             </div>
           </div>
-          
+
           <!-- Safety Instructions -->
           <div class="safety-instructions">
             <div class="instruction-item">
@@ -48,7 +48,7 @@
                 <p>Register your presence and collect monitoring equipment</p>
               </div>
             </div>
-            
+
             <div class="instruction-item">
               <div class="instruction-icon">
                 <i class="fas fa-microchip"></i>
@@ -58,7 +58,7 @@
                 <p>Each worker receives a unique temperature sensor ID</p>
               </div>
             </div>
-            
+
             <div class="instruction-item">
               <div class="instruction-icon">
                 <i class="fas fa-shield-alt"></i>
@@ -69,7 +69,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Safety Notice -->
           <div class="safety-notice">
             <div class="notice-header">
@@ -80,7 +80,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Right Side - Check-in Form -->
       <div class="form-section">
         <div class="form-container">
@@ -96,7 +96,7 @@
               <span>No login required</span>
             </div>
           </div>
-          
+
           <!-- Check-in Form -->
           <form method="post" action="{{ url_for('views.checkin_post') }}" class="checkin-form">
             <div class="input-group">
@@ -104,56 +104,37 @@
                 <div class="input-icon">
                   <i class="fas fa-user"></i>
                 </div>
-                <input 
-                  type="text" 
-                  id="full_name" 
-                  name="full_name" 
-                  placeholder="Full Name"
-                  class="form-input-modern"
-                  required
-                >
+                <input type="text" id="full_name" name="full_name" placeholder="Full Name" class="form-input-modern"
+                  required>
                 <div class="input-line"></div>
               </div>
               <p class="input-hint">Your name as it appears in company records</p>
             </div>
-            
+
             <div class="input-group">
               <div class="input-wrapper">
                 <div class="input-icon">
                   <i class="fas fa-id-badge"></i>
                 </div>
-                <input 
-                  type="text" 
-                  id="worker_id" 
-                  name="worker_id" 
-                  placeholder="Worker ID (e.g., W001, EMP123)"
-                  class="form-input-modern worker-id-input"
-                  required
-                  style="text-transform: uppercase;"
-                >
+                <input type="text" id="worker_id" name="worker_id" placeholder="Worker ID (e.g., W001, EMP123)"
+                  class="form-input-modern worker-id-input" required style="text-transform: uppercase;">
                 <div class="input-line"></div>
               </div>
               <p class="input-hint">Your unique employee identification number</p>
             </div>
-            
+
             <div class="input-group">
               <div class="input-wrapper">
                 <div class="input-icon">
                   <i class="fas fa-microchip"></i>
                 </div>
-                <input 
-                  type="text" 
-                  id="element_id" 
-                  name="element_id" 
-                  placeholder="Element ID (1, 2, 3, 4...)"
-                  class="form-input-modern"
-                  required
-                >
+                <input type="text" id="element_id" name="element_id" placeholder="Element ID (1, 2, 3, 4...)"
+                  class="form-input-modern" required>
                 <div class="input-line"></div>
               </div>
               <p class="input-hint">The ID number on your assigned monitoring device</p>
             </div>
-            
+
             <button type="submit" class="checkin-btn">
               <span class="btn-text">Complete Check-in</span>
               <div class="btn-icon">
@@ -161,7 +142,7 @@
               </div>
             </button>
           </form>
-          
+
           <!-- Quick Instructions -->
           <div class="quick-instructions">
             <h4>Quick Steps:</h4>
@@ -179,136 +160,138 @@
 </div>
 
 <script>
-// Mobile and responsive enhancements
-document.addEventListener('DOMContentLoaded', function() {
+  // Mobile and responsive enhancements
+  document.addEventListener('DOMContentLoaded', function () {
     // Detect mobile device
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
-    
+
     // Add mobile class for additional styling
     if (isMobile) {
-        document.body.classList.add('mobile-device');
+      document.body.classList.add('mobile-device');
     }
-    
+
     // Prevent zoom on input focus for iOS
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const inputs = document.querySelectorAll('.form-input-modern');
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
-            });
-            input.addEventListener('blur', function() {
-                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1');
-            });
+      const inputs = document.querySelectorAll('.form-input-modern');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function () {
+          document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
         });
+        input.addEventListener('blur', function () {
+          document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1');
+        });
+      });
     }
-    
+
     // Adjust viewport height for mobile browsers
     function setMobileHeight() {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
-    
+
     setMobileHeight();
     window.addEventListener('resize', setMobileHeight);
     window.addEventListener('orientationchange', setMobileHeight);
-    
+
     // Handle keyboard visibility on mobile
     if (isMobile) {
-        const checkinContainer = document.querySelector('.immersive-checkin-container');
-        const inputs = document.querySelectorAll('.form-input-modern');
-        
-        inputs.forEach(input => {
-            input.addEventListener('focus', function() {
-                setTimeout(() => {
-                    checkinContainer.style.height = 'auto';
-                    checkinContainer.style.minHeight = '100vh';
-                }, 300);
-            });
-            
-            input.addEventListener('blur', function() {
-                setTimeout(() => {
-                    checkinContainer.style.height = '100vh';
-                    checkinContainer.style.minHeight = '100vh';
-                }, 300);
-            });
+      const checkinContainer = document.querySelector('.immersive-checkin-container');
+      const inputs = document.querySelectorAll('.form-input-modern');
+
+      inputs.forEach(input => {
+        input.addEventListener('focus', function () {
+          setTimeout(() => {
+            checkinContainer.style.height = 'auto';
+            checkinContainer.style.minHeight = '100vh';
+          }, 300);
         });
+
+        input.addEventListener('blur', function () {
+          setTimeout(() => {
+            checkinContainer.style.height = '100vh';
+            checkinContainer.style.minHeight = '100vh';
+          }, 300);
+        });
+      });
     }
-});
+  });
 
-// Auto-uppercase worker ID
-document.getElementById('worker_id').addEventListener('input', function(e) {
+  // Auto-uppercase worker ID
+  document.getElementById('worker_id').addEventListener('input', function (e) {
     this.value = this.value.toUpperCase();
-});
+  });
 
-// Add floating input label effect
-document.querySelectorAll('.form-input-modern').forEach(input => {
-    input.addEventListener('focus', function() {
-        this.parentElement.classList.add('focused');
+  // Add floating input label effect
+  document.querySelectorAll('.form-input-modern').forEach(input => {
+    input.addEventListener('focus', function () {
+      this.parentElement.classList.add('focused');
     });
-    
-    input.addEventListener('blur', function() {
-        if (!this.value) {
-            this.parentElement.classList.remove('focused');
-        }
+
+    input.addEventListener('blur', function () {
+      if (!this.value) {
+        this.parentElement.classList.remove('focused');
+      }
     });
-    
+
     // Check if input has value on load
     if (input.value) {
-        input.parentElement.classList.add('focused');
+      input.parentElement.classList.add('focused');
     }
-});
+  });
 
-// Add smooth loading animation to form submission
-document.querySelector('.checkin-form').addEventListener('submit', function(e) {
+  // Add smooth loading animation to form submission
+  document.querySelector('.checkin-form').addEventListener('submit', function (e) {
     const btn = document.querySelector('.checkin-btn');
     const btnText = btn.querySelector('.btn-text');
     const btnIcon = btn.querySelector('.btn-icon i');
-    
+
     btnText.textContent = 'Processing...';
     btnIcon.className = 'fas fa-spinner fa-spin';
     btn.disabled = true;
-});
+  });
 
-// Mobile menu is now handled by base.html
-// Just hide the main content area since this is a full-screen immersive page
-const main = document.querySelector('main');
-if (main) main.style.display = 'none';
+  // Mobile menu is now handled by base.html
+  // Just hide the main content area since this is a full-screen immersive page
+  const main = document.querySelector('main');
+  if (main) main.style.display = 'block';
 </script>
 
 <style>
-@keyframes slide-in {
+
+  @keyframes slide-in {
     from {
-        opacity: 0;
-        transform: translateX(100%);
+      opacity: 0;
+      transform: translateX(100%);
     }
+
     to {
-        opacity: 1;
-        transform: translateX(0);
+      opacity: 1;
+      transform: translateX(0);
     }
-}
+  }
 
-.animate-slide-in {
+  .animate-slide-in {
     animation: slide-in 0.3s ease-out;
-}
+  }
 
-.input-wrapper.focused .input-icon {
+  .input-wrapper.focused .input-icon {
     color: #10b981;
     transform: translateY(-2px);
-}
+  }
 
-/* Immersive Navigation Styles */
-.immersive-nav {
+  /* Immersive Navigation Styles */
+  .immersive-nav {
     backdrop-filter: blur(10px);
     background: rgba(0, 0, 0, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
-}
+  }
 
-.immersive-nav:hover {
+  .immersive-nav:hover {
     background: rgba(0, 0, 0, 0.3);
-}
+  }
 
-.immersive-nav-link {
+  .immersive-nav-link {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-size: 0.875rem;
@@ -320,16 +303,16 @@ if (main) main.style.display = 'none';
     align-items: center;
     backdrop-filter: blur(10px);
     border: 1px solid transparent;
-}
+  }
 
-.immersive-nav-link:hover {
+  .immersive-nav-link:hover {
     color: white;
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
-}
+  }
 
-.immersive-mobile-nav-link {
+  .immersive-mobile-nav-link {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     display: flex;
@@ -338,47 +321,48 @@ if (main) main.style.display = 'none';
     border-radius: 0.75rem;
     transition: all 0.2s ease;
     border: 1px solid transparent;
-}
+  }
 
-.immersive-mobile-nav-link:hover {
+  .immersive-mobile-nav-link:hover {
     background: rgba(255, 255, 255, 0.1);
     border-color: rgba(255, 255, 255, 0.2);
     color: white;
-}
+  }
 
-#immersive-mobile-menu {
+  #immersive-mobile-menu {
     opacity: 0;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-}
+  }
 
-#immersive-mobile-menu:not(.hidden) {
+  #immersive-mobile-menu:not(.hidden) {
     opacity: 1;
     transform: translateY(0);
-}
+  }
 
-@keyframes menuSlideIn {
+  @keyframes menuSlideIn {
     from {
-        opacity: 0;
-        transform: translateY(-5px);
+      opacity: 0;
+      transform: translateY(-5px);
     }
+
     to {
-        opacity: 1;
-        transform: translateY(0);
+      opacity: 1;
+      transform: translateY(0);
     }
-}
+  }
 
-.immersive-mobile-nav-link {
+  .immersive-mobile-nav-link {
     animation: menuSlideIn 0.3s ease forwards;
-}
+  }
 
-.immersive-mobile-nav-link:nth-child(2) {
+  .immersive-mobile-nav-link:nth-child(2) {
     animation-delay: 0.1s;
-}
+  }
 
-.immersive-mobile-nav-link:nth-child(3) {
+  .immersive-mobile-nav-link:nth-child(3) {
     animation-delay: 0.2s;
-}
+  }
 </style>
 
 {% endblock %}
