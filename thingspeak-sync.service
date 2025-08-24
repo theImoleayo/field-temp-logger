@@ -1,0 +1,22 @@
+[Unit]
+Description=ThingSpeak Data Sync Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=theimoleayo
+Group=theimoleayo
+WorkingDirectory=/home/theimoleayo/Git_Clone/Field_Worker_Monitoring
+ExecStart=/usr/bin/python3 /home/theimoleayo/Git_Clone/Field_Worker_Monitoring/thingspeak_sync.py
+Restart=on-failure
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables
+Environment=FLASK_ENV=production
+Environment=PYTHONPATH=/home/theimoleayo/Git_Clone/Field_Worker_Monitoring
+
+[Install]
+WantedBy=multi-user.target
