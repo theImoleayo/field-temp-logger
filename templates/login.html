@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TempGuard Pro - Admin Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="min-h-screen font-inter antialiased">
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="fixed top-4 right-4 z-50 space-y-2">
+{% for category, msg in messages %}
+<div class="px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border animate-slide-in
+    {{ 'bg-red-100/90 border-red-200 text-red-800' if category=='danger' else 
+       'bg-green-100/90 border-green-200 text-green-800' if category=='success' else 
+       'bg-amber-100/90 border-amber-200 text-amber-800' }}
+    font-medium text-sm max-w-sm">
+    <div class="flex items-center space-x-2">
+        <i class="fas {{ 'fa-exclamation-triangle' if category=='danger' else 'fa-check-circle' if category=='success' else 'fa-info-circle' }}"></i>
+        <span>{{ msg }}</span>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<!-- Full-Screen Immersive Login -->
+<div class="immersive-login-container">
+  <!-- Background with Overlay -->
+  <div class="login-background">
+    <!-- Animated Background Elements -->
+    <div class="floating-elements">
+      <div class="floating-circle circle-1"></div>
+      <div class="floating-circle circle-2"></div>
+      <div class="floating-circle circle-3"></div>
+      <div class="floating-circle circle-4"></div>
+    </div>
+  </div>
+  
+  <!-- Login Content -->
+  <div class="login-content-wrapper">
+    <div class="login-grid">
+      <!-- Left Side - Branding & Info -->
+      <div class="brand-section">
+        <div class="brand-content">
+          <!-- Logo & Title -->
+          <div class="brand-header">
+            <div class="logo-container">
+              <div class="logo-icon">
+                <i class="fas fa-thermometer-half"></i>
+              </div>
+              <div class="logo-pulse"></div>
+            </div>
+            <div class="brand-text">
+              <h1 class="brand-title">TempGuard Pro</h1>
+              <p class="brand-subtitle">Advanced Worker Safety Monitoring</p>
+            </div>
+          </div>
+          
+          <!-- Feature Highlights -->
+          <div class="features-highlight">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-shield-virus"></i>
+              </div>
+              <div class="feature-text">
+                <h3>Real-time Health Monitoring</h3>
+                <p>Continuous temperature tracking for worker safety</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-bell"></i>
+              </div>
+              <div class="feature-text">
+                <h3>Instant Fever Alerts</h3>
+                <p>Immediate notifications for critical temperature readings</p>
+              </div>
+            </div>
+            
+            <div class="feature-item">
+              <div class="feature-icon">
+                <i class="fas fa-chart-pulse"></i>
+              </div>
+              <div class="feature-text">
+                <h3>Live Dashboard Analytics</h3>
+                <p>Comprehensive monitoring and reporting tools</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Side - Login Form -->
+      <div class="form-section">
+        <div class="form-container">
+          <!-- Form Header -->
+          <div class="form-header">
+            <div class="form-icon">
+              <i class="fas fa-user-shield"></i>
+            </div>
+            <h2>Secure Access</h2>
+            <p>Sign in to your administrator dashboard</p>
+          </div>
+          
+          <!-- Login Form -->
+          <form method="post" action="{{ url_for('views.login_post') }}" class="login-form">
+            <div class="input-group">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-user"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="username" 
+                  name="username" 
+                  placeholder="Username"
+                  class="form-input-modern"
+                  required 
+                  autocomplete="username"
+                >
+                <div class="input-line"></div>
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-lock"></i>
+                </div>
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password" 
+                  placeholder="Password"
+                  class="form-input-modern"
+                  required 
+                  autocomplete="current-password"
+                >
+                <div class="input-line"></div>
+              </div>
+            </div>
+            
+            <button type="submit" class="login-btn">
+              <span class="btn-text">Access Dashboard</span>
+              <div class="btn-icon">
+                <i class="fas fa-arrow-right"></i>
+              </div>
+            </button>
+          </form>
+          
+          <!-- Demo Credentials -->
+          <div class="demo-info">
+            <div class="demo-badge">
+              <i class="fas fa-key"></i>
+              <span>Demo Access</span>
+            </div>
+            <div class="credentials">
+              <span class="credential-item">admin</span>
+              <span class="divider">•</span>
+              <span class="credential-item">admin123</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mobile and responsive enhancements
+document.addEventListener('DOMContentLoaded', function() {
+    // Detect mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    // Add mobile class for additional styling
+    if (isMobile) {
+        document.body.classList.add('mobile-device');
+    }
+    
+    // Prevent zoom on input focus for iOS
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const inputs = document.querySelectorAll('.form-input-modern');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+            });
+            input.addEventListener('blur', function() {
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1');
+            });
+        });
+    }
+    
+    // Adjust viewport height for mobile browsers
+    function setMobileHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    setMobileHeight();
+    window.addEventListener('resize', setMobileHeight);
+    window.addEventListener('orientationchange', setMobileHeight);
+    
+    // Handle keyboard visibility on mobile
+    if (isMobile) {
+        const loginContainer = document.querySelector('.immersive-login-container');
+        const inputs = document.querySelectorAll('.form-input-modern');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    loginContainer.style.height = 'auto';
+                    loginContainer.style.minHeight = '100vh';
+                }, 300);
+            });
+            
+            input.addEventListener('blur', function() {
+                setTimeout(() => {
+                    loginContainer.style.height = '100vh';
+                    loginContainer.style.minHeight = '100vh';
+                }, 300);
+            });
+        });
+    }
+    // Hide navigation
+    const nav = document.getElementById('main-nav');
+    if (nav) nav.style.display = 'none';
+    
+    // Hide main container
+    const main = document.querySelector('main');
+    if (main) main.style.display = 'none';
+    
+    // Handle flash messages in immersive context
+    const flashMessages = document.querySelectorAll('.flash-message');
+    if (flashMessages.length > 0) {
+        const messagesContainer = document.createElement('div');
+        messagesContainer.className = 'fixed top-4 right-4 z-50 space-y-2';
+        
+        flashMessages.forEach(msg => {
+            const immersiveFlash = document.createElement('div');
+            immersiveFlash.className = `
+                px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border 
+                ${msg.classList.contains('flash-danger') ? 'bg-red-100/90 border-red-200 text-red-800' : 
+                  msg.classList.contains('flash-success') ? 'bg-green-100/90 border-green-200 text-green-800' : 
+                  'bg-amber-100/90 border-amber-200 text-amber-800'}
+                font-medium text-sm max-w-sm animate-slide-in
+            `;
+            immersiveFlash.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${
+                        msg.classList.contains('flash-danger') ? 'fa-exclamation-triangle' :
+                        msg.classList.contains('flash-success') ? 'fa-check-circle' :
+                        'fa-info-circle'
+                    }"></i>
+                    <span>${msg.textContent}</span>
+                </div>
+            `;
+            messagesContainer.appendChild(immersiveFlash);
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                immersiveFlash.style.opacity = '0';
+                immersiveFlash.style.transform = 'translateX(100%)';
+                setTimeout(() => immersiveFlash.remove(), 300);
+            }, 5000);
+        });
+        
+        document.body.appendChild(messagesContainer);
+    }
+});
+
+// Add floating input label effect
+document.querySelectorAll('.form-input-modern').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function() {
+        if (!this.value) {
+            this.parentElement.classList.remove('focused');
+        }
+    });
+    
+    // Check if input has value on load
+    if (input.value) {
+        input.parentElement.classList.add('focused');
+    }
+});
+
+// Add smooth loading animation to form submission
+document.querySelector('.login-form').addEventListener('submit', function(e) {
+    const btn = document.querySelector('.login-btn');
+    const btnText = btn.querySelector('.btn-text');
+    const btnIcon = btn.querySelector('.btn-icon i');
+    
+    btnText.textContent = 'Authenticating...';
+    btnIcon.className = 'fas fa-spinner fa-spin';
+    btn.disabled = true;
+});
+</script>
+
+<style>
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+
+.input-wrapper.focused .input-icon {
+    color: #3b82f6;
+    transform: translateY(-2px);
+}
+</style>
+
+</body>
+</html>

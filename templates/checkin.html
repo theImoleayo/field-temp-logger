@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TempGuard Pro - Worker Check-in</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="min-h-screen font-inter antialiased">
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<div class="fixed top-4 right-4 z-50 space-y-2">
+{% for category, msg in messages %}
+<div class="px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border animate-slide-in
+    {{ 'bg-red-100/90 border-red-200 text-red-800' if category=='danger' else 
+       'bg-green-100/90 border-green-200 text-green-800' if category=='success' else 
+       'bg-amber-100/90 border-amber-200 text-amber-800' }}
+    font-medium text-sm max-w-sm">
+    <div class="flex items-center space-x-2">
+        <i class="fas {{ 'fa-exclamation-triangle' if category=='danger' else 'fa-check-circle' if category=='success' else 'fa-info-circle' }}"></i>
+        <span>{{ msg }}</span>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+
+<!-- Full-Screen Immersive Check-in -->
+<div class="immersive-checkin-container">
+  <!-- Background with Overlay -->
+  <div class="checkin-background">
+    <!-- Animated Background Elements -->
+    <div class="floating-elements">
+      <div class="floating-circle circle-1"></div>
+      <div class="floating-circle circle-2"></div>
+      <div class="floating-circle circle-3"></div>
+      <div class="floating-circle circle-4"></div>
+    </div>
+  </div>
+  
+  <!-- Check-in Content -->
+  <div class="checkin-content-wrapper">
+    <div class="checkin-grid">
+      <!-- Left Side - Safety Information & Branding -->
+      <div class="safety-section">
+        <div class="safety-content">
+          <!-- Logo & Title -->
+          <div class="safety-header">
+            <div class="logo-container">
+              <div class="logo-icon">
+                <i class="fas fa-hard-hat"></i>
+              </div>
+              <div class="logo-pulse"></div>
+            </div>
+            <div class="brand-text">
+              <h1 class="brand-title">Worker Check-in</h1>
+              <p class="brand-subtitle">Daily Safety Registration Portal</p>
+            </div>
+          </div>
+          
+          <!-- Safety Instructions -->
+          <div class="safety-instructions">
+            <div class="instruction-item">
+              <div class="instruction-icon">
+                <i class="fas fa-clipboard-list"></i>
+              </div>
+              <div class="instruction-text">
+                <h3>Daily Registration</h3>
+                <p>Register your presence and collect monitoring equipment</p>
+              </div>
+            </div>
+            
+            <div class="instruction-item">
+              <div class="instruction-icon">
+                <i class="fas fa-microchip"></i>
+              </div>
+              <div class="instruction-text">
+                <h3>Device Assignment</h3>
+                <p>Each worker receives a unique temperature sensor ID</p>
+              </div>
+            </div>
+            
+            <div class="instruction-item">
+              <div class="instruction-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="instruction-text">
+                <h3>Safety Monitoring</h3>
+                <p>Continuous health tracking throughout your shift</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Safety Notice -->
+          <div class="safety-notice">
+            <div class="notice-header">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h4>Important Safety Notice</h4>
+            </div>
+            <p>Temperature monitoring is mandatory. Report fever alerts (≥38°C) to medical immediately.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Side - Check-in Form -->
+      <div class="form-section">
+        <div class="form-container">
+          <!-- Form Header -->
+          <div class="form-header">
+            <div class="form-icon">
+              <i class="fas fa-user-check"></i>
+            </div>
+            <h2>Daily Check-in</h2>
+            <p>Complete your registration to begin monitoring</p>
+            <div class="no-login-badge">
+              <i class="fas fa-unlock"></i>
+              <span>No login required</span>
+            </div>
+          </div>
+          
+          <!-- Check-in Form -->
+          <form method="post" action="{{ url_for('views.checkin_post') }}" class="checkin-form">
+            <div class="input-group">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-user"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="full_name" 
+                  name="full_name" 
+                  placeholder="Full Name"
+                  class="form-input-modern"
+                  required
+                >
+                <div class="input-line"></div>
+              </div>
+              <p class="input-hint">Your name as it appears in company records</p>
+            </div>
+            
+            <div class="input-group">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-id-badge"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="worker_id" 
+                  name="worker_id" 
+                  placeholder="Worker ID (e.g., W001, EMP123)"
+                  class="form-input-modern worker-id-input"
+                  required
+                  style="text-transform: uppercase;"
+                >
+                <div class="input-line"></div>
+              </div>
+              <p class="input-hint">Your unique employee identification number</p>
+            </div>
+            
+            <div class="input-group">
+              <div class="input-wrapper">
+                <div class="input-icon">
+                  <i class="fas fa-microchip"></i>
+                </div>
+                <input 
+                  type="text" 
+                  id="element_id" 
+                  name="element_id" 
+                  placeholder="Element ID (1, 2, 3, 4...)"
+                  class="form-input-modern"
+                  required
+                >
+                <div class="input-line"></div>
+              </div>
+              <p class="input-hint">The ID number on your assigned monitoring device</p>
+            </div>
+            
+            <button type="submit" class="checkin-btn">
+              <span class="btn-text">Complete Check-in</span>
+              <div class="btn-icon">
+                <i class="fas fa-check-circle"></i>
+              </div>
+            </button>
+          </form>
+          
+          <!-- Quick Instructions -->
+          <div class="quick-instructions">
+            <h4>Quick Steps:</h4>
+            <div class="steps">
+              <span class="step">1. Collect Device</span>
+              <span class="step">2. Note Element ID</span>
+              <span class="step">3. Complete Form</span>
+              <span class="step">4. Attach Securely</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Mobile and responsive enhancements
+document.addEventListener('DOMContentLoaded', function() {
+    // Detect mobile device
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+    
+    // Add mobile class for additional styling
+    if (isMobile) {
+        document.body.classList.add('mobile-device');
+    }
+    
+    // Prevent zoom on input focus for iOS
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const inputs = document.querySelectorAll('.form-input-modern');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+            });
+            input.addEventListener('blur', function() {
+                document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1');
+            });
+        });
+    }
+    
+    // Adjust viewport height for mobile browsers
+    function setMobileHeight() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    
+    setMobileHeight();
+    window.addEventListener('resize', setMobileHeight);
+    window.addEventListener('orientationchange', setMobileHeight);
+    
+    // Handle keyboard visibility on mobile
+    if (isMobile) {
+        const checkinContainer = document.querySelector('.immersive-checkin-container');
+        const inputs = document.querySelectorAll('.form-input-modern');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    checkinContainer.style.height = 'auto';
+                    checkinContainer.style.minHeight = '100vh';
+                }, 300);
+            });
+            
+            input.addEventListener('blur', function() {
+                setTimeout(() => {
+                    checkinContainer.style.height = '100vh';
+                    checkinContainer.style.minHeight = '100vh';
+                }, 300);
+            });
+        });
+    }
+});
+
+// Auto-uppercase worker ID
+document.getElementById('worker_id').addEventListener('input', function(e) {
+    this.value = this.value.toUpperCase();
+});
+
+// Add floating input label effect
+document.querySelectorAll('.form-input-modern').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+    });
+    
+    input.addEventListener('blur', function() {
+        if (!this.value) {
+            this.parentElement.classList.remove('focused');
+        }
+    });
+    
+    // Check if input has value on load
+    if (input.value) {
+        input.parentElement.classList.add('focused');
+    }
+});
+
+// Add smooth loading animation to form submission
+document.querySelector('.checkin-form').addEventListener('submit', function(e) {
+    const btn = document.querySelector('.checkin-btn');
+    const btnText = btn.querySelector('.btn-text');
+    const btnIcon = btn.querySelector('.btn-icon i');
+    
+    btnText.textContent = 'Processing...';
+    btnIcon.className = 'fas fa-spinner fa-spin';
+    btn.disabled = true;
+});
+</script>
+
+<style>
+@keyframes slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+}
+
+.input-wrapper.focused .input-icon {
+    color: #10b981;
+    transform: translateY(-2px);
+}
+</style>
+
+</body>
+</html>

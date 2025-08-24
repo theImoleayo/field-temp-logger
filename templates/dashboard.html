@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Hero Header -->
+<div class="hero-dashboard hero-section rounded-2xl p-8 mb-8 text-white">
+  <div class="relative z-10">
+    <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between">
+      <div class="mb-4 lg:mb-0">
+        <div class="flex items-center space-x-3 mb-2">
+          <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+            <i class="fas fa-chart-line text-2xl"></i>
+          </div>
+          <div>
+            <h1 class="text-3xl font-bold">Temperature Control Center</h1>
+            <p class="text-white/80 text-sm">Real-time worker health monitoring system</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4 text-sm text-white/90">
+          <span class="flex items-center space-x-1">
+            <i class="fas fa-calendar-day"></i>
+            <span>{{ date_str }}</span>
+          </span>
+          <span class="flex items-center space-x-1">
+            <i class="fas fa-globe-africa"></i>
+            <span>Africa/Lagos</span>
+          </span>
+          <div class="flex items-center space-x-2 px-3 py-1 bg-white/20 rounded-full">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span>Live Monitoring</span>
+          </div>
+        </div>
+      </div>
+      <a href="{{ url_for('views.checkin') }}" class="btn-primary">
+        <i class="fas fa-user-plus mr-2"></i>
+        New Worker Check-in
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <!-- Total Workers -->
+  <div class="stat-card">
+    <div class="stat-card-icon">
+      <i class="fas fa-users text-xl"></i>
+    </div>
+    <div class="relative z-10">
+      <h3 class="text-2xl font-bold" id="total-workers">{{ checkins|length }}</h3>
+      <p class="text-white/80 text-sm">Active Workers</p>
+      <p class="text-white/60 text-xs mt-1">Checked in today</p>
+    </div>
+  </div>
+  
+  <!-- Average Temperature -->
+  <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+    <div class="stat-card-icon">
+      <i class="fas fa-thermometer-half text-xl"></i>
+    </div>
+    <div class="relative z-10">
+      <h3 class="text-2xl font-bold" id="avg-temp">--.-°C</h3>
+      <p class="text-white/80 text-sm">Average Temp</p>
+      <p class="text-white/60 text-xs mt-1">Last 10 readings</p>
+    </div>
+  </div>
+  
+  <!-- Fever Alerts -->
+  <div class="stat-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+    <div class="stat-card-icon">
+      <i class="fas fa-exclamation-triangle text-xl"></i>
+    </div>
+    <div class="relative z-10">
+      <h3 class="text-2xl font-bold" id="fever-count">0</h3>
+      <p class="text-white/80 text-sm">Fever Alerts</p>
+      <p class="text-white/60 text-xs mt-1">≥38.0°C detected</p>
+    </div>
+  </div>
+  
+  <!-- System Status -->
+  <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+    <div class="stat-card-icon">
+      <i class="fas fa-heartbeat text-xl"></i>
+    </div>
+    <div class="relative z-10">
+      <h3 class="text-2xl font-bold" id="system-status">Online</h3>
+      <p class="text-white/80 text-sm">System Status</p>
+      <p class="text-white/60 text-xs mt-1" id="last-update">Just now</p>
+    </div>
+  </div>
+</div>
+
+<!-- Main Data Table -->
+<div class="elegant-card p-6">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 flex items-center space-x-2">
+        <i class="fas fa-table text-blue-600"></i>
+        <span>Live Temperature Monitoring</span>
+      </h2>
+      <p class="text-slate-600 text-sm mt-1">Real-time worker temperature data with automatic updates</p>
+    </div>
+    <div class="flex items-center space-x-3">
+      <div class="flex items-center space-x-2 text-sm text-slate-500">
+        <i class="fas fa-sync-alt animate-spin text-blue-500" id="refresh-indicator" style="display: none;"></i>
+        <span id="refresh-status">Auto-refresh in <span id="countdown">11</span>s</span>
+      </div>
+    </div>
+  </div>
+  
+  {% if checkins %}
+  <div class="overflow-x-auto">
+    <table class="modern-table w-full" id="readings-table">
+      <thead>
+        <tr>
+          <th class="modern-table th">
+            <i class="fas fa-id-badge mr-2"></i>Worker ID
+          </th>
+          <th class="modern-table th">
+            <i class="fas fa-user mr-2"></i>Full Name
+          </th>
+          <th class="modern-table th">
+            <i class="fas fa-microchip mr-2"></i>Element ID
+          </th>
+          <th class="modern-table th">
+            <i class="fas fa-thermometer-half mr-2"></i>Temperature
+          </th>
+          <th class="modern-table th">
+            <i class="fas fa-clock mr-2"></i>Last Reading
+          </th>
+          <th class="modern-table th">
+            <i class="fas fa-info-circle mr-2"></i>Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in checkins %}
+        <tr data-worker-id="{{ c.worker_id }}" class="hover:bg-slate-50 transition-colors">
+          <td class="modern-table td font-mono font-semibold text-blue-600">{{ c.worker_id }}</td>
+          <td class="modern-table td">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 worker-avatar rounded-full flex items-center justify-center shadow-sm">
+                <i class="fas fa-hard-hat text-white text-sm"></i>
+              </div>
+              <div>
+                <span class="font-medium text-slate-900">{{ c.full_name }}</span>
+                <p class="text-xs text-slate-500 mt-0.5">Field Worker</p>
+              </div>
+            </div>
+          </td>
+          <td class="modern-table td">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+              <i class="fas fa-microchip mr-1"></i>
+              {{ c.element_id }}
+            </span>
+          </td>
+          <td class="modern-table td temp font-mono font-bold text-lg">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-thermometer-half text-slate-400"></i>
+              <span>—</span>
+            </div>
+          </td>
+          <td class="modern-table td time text-slate-600">
+            <div class="flex items-center space-x-2">
+              <i class="fas fa-clock text-slate-400"></i>
+              <span>—</span>
+            </div>
+          </td>
+          <td class="modern-table td status">
+            <span class="status-badge bg-slate-100 text-slate-600 border-slate-200">
+              <i class="fas fa-hourglass-half mr-1"></i>
+              Waiting
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="text-center py-12">
+    <div class="w-24 h-24 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+      <i class="fas fa-users text-3xl text-slate-400"></i>
+    </div>
+    <h3 class="text-lg font-semibold text-slate-900 mb-2">No Workers Checked In</h3>
+    <p class="text-slate-600 mb-4">No workers have checked in for today yet.</p>
+    <a href="{{ url_for('views.checkin') }}" class="btn-primary">
+      <i class="fas fa-plus mr-2"></i>
+      Add First Worker
+    </a>
+  </div>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+{% endblock %}
