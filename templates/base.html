@@ -78,9 +78,42 @@
   
   <!-- Mobile menu button -->
   <div class="md:hidden">
-    <button class="text-slate-600 hover:text-slate-900">
-      <i class="fas fa-bars text-xl"></i>
+    <button id="mobile-menu-button" class="relative bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg p-3 text-slate-600 hover:text-slate-900 transition-all duration-200 shadow-sm">
+      <i id="menu-icon" class="fas fa-bars text-xl"></i>
     </button>
+  </div>
+</div>
+
+<!-- Mobile Menu Dropdown -->
+<div id="mobile-menu" class="md:hidden hidden bg-white/95 backdrop-blur-sm border-b border-slate-200/50 shadow-lg">
+  <div class="px-4 py-3 space-y-3">
+    <a href="{{ url_for('views.checkin') }}" class="mobile-nav-link">
+      <i class="fas fa-clipboard-list mr-3 text-blue-600"></i>
+      <span>Worker Check-in</span>
+    </a>
+    {% if session.get('admin_user') %}
+      <a href="{{ url_for('views.dashboard') }}" class="mobile-nav-link">
+        <i class="fas fa-chart-line mr-3 text-blue-600"></i>
+        <span>Dashboard</span>
+      </a>
+      <div class="mobile-nav-divider"></div>
+      <div class="mobile-user-info">
+        <div class="flex items-center space-x-2 px-3 py-2 bg-green-50 border border-green-200 rounded-lg">
+          <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-sm font-medium text-green-700">{{ session.get('admin_user') }}</span>
+        </div>
+      </div>
+      <a href="{{ url_for('views.logout') }}" class="mobile-nav-link logout-link">
+        <i class="fas fa-sign-out-alt mr-3 text-red-600"></i>
+        <span>Logout</span>
+      </a>
+    {% else %}
+      <div class="mobile-nav-divider"></div>
+      <a href="{{ url_for('views.login') }}" class="mobile-nav-link admin-link">
+        <i class="fas fa-shield-alt mr-3 text-blue-600"></i>
+        <span>Admin Access</span>
+      </a>
+    {% endif %}
   </div>
 </div>
 </div>
@@ -97,5 +130,63 @@
 {% endwith %}
 {% block content %}{% endblock %}
 </main>
+
+<!-- Mobile Menu JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    let isMenuOpen = false;
+
+    if (mobileMenuButton && mobileMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            isMenuOpen = !isMenuOpen;
+            
+            if (isMenuOpen) {
+                // Show menu
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.classList.add('mobile-menu-show');
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+                
+                // Animate menu items
+                const menuItems = mobileMenu.querySelectorAll('.mobile-nav-link, .mobile-user-info');
+                menuItems.forEach((item, index) => {
+                    setTimeout(() => {
+                        item.style.opacity = '1';
+                        item.style.transform = 'translateY(0)';
+                    }, index * 50);
+                });
+            } else {
+                // Hide menu
+                mobileMenu.classList.add('mobile-menu-hide');
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+                
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('mobile-menu-show', 'mobile-menu-hide');
+                }, 200);
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (isMenuOpen && !mobileMenuButton.contains(event.target) && !mobileMenu.contains(event.target)) {
+                mobileMenuButton.click();
+            }
+        });
+        
+        // Close menu when window is resized to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && isMenuOpen) {
+                mobileMenuButton.click();
+            }
+        });
+    }
+});
+</script>
+
 </body>
 </html>

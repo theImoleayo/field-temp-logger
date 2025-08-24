@@ -1,37 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TempGuard Pro - Worker Check-in</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body class="min-h-screen font-inter antialiased">
+{% extends 'base.html' %}
 
-<!-- Flash Messages -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<div class="fixed top-4 right-4 z-50 space-y-2">
-{% for category, msg in messages %}
-<div class="px-6 py-4 rounded-2xl shadow-2xl backdrop-blur-md border animate-slide-in
-    {{ 'bg-red-100/90 border-red-200 text-red-800' if category=='danger' else 
-       'bg-green-100/90 border-green-200 text-green-800' if category=='success' else 
-       'bg-amber-100/90 border-amber-200 text-amber-800' }}
-    font-medium text-sm max-w-sm">
-    <div class="flex items-center space-x-2">
-        <i class="fas {{ 'fa-exclamation-triangle' if category=='danger' else 'fa-check-circle' if category=='success' else 'fa-info-circle' }}"></i>
-        <span>{{ msg }}</span>
-    </div>
-</div>
-{% endfor %}
-</div>
-{% endif %}
-{% endwith %}
+{% block title %}TempGuard Pro - Worker Check-in{% endblock %}
+
+{% block content %}
 
 <!-- Full-Screen Immersive Check-in -->
 <div class="immersive-checkin-container">
@@ -297,6 +268,11 @@ document.querySelector('.checkin-form').addEventListener('submit', function(e) {
     btnIcon.className = 'fas fa-spinner fa-spin';
     btn.disabled = true;
 });
+
+// Mobile menu is now handled by base.html
+// Just hide the main content area since this is a full-screen immersive page
+const main = document.querySelector('main');
+if (main) main.style.display = 'none';
 </script>
 
 <style>
@@ -319,7 +295,90 @@ document.querySelector('.checkin-form').addEventListener('submit', function(e) {
     color: #10b981;
     transform: translateY(-2px);
 }
+
+/* Immersive Navigation Styles */
+.immersive-nav {
+    backdrop-filter: blur(10px);
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.immersive-nav:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.immersive-nav-link {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    border: 1px solid transparent;
+}
+
+.immersive-nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.immersive-mobile-nav-link {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.immersive-mobile-nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+#immersive-mobile-menu {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+#immersive-mobile-menu:not(.hidden) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes menuSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.immersive-mobile-nav-link {
+    animation: menuSlideIn 0.3s ease forwards;
+}
+
+.immersive-mobile-nav-link:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.immersive-mobile-nav-link:nth-child(3) {
+    animation-delay: 0.2s;
+}
 </style>
 
-</body>
-</html>
+{% endblock %}
